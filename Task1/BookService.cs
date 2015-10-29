@@ -9,7 +9,6 @@ namespace Task1
     public sealed class BookService
     {
         public IRepository<Book> Repository { get; }
-        public IEnumerable<Book> Books => Repository.GetAllItems();
         public BookService(IRepository<Book> repository)
         {
             Repository = repository;
@@ -19,7 +18,7 @@ namespace Task1
         {
             if (book == null)
                 throw new ArgumentNullException(nameof(book));
-            if (Books.Contains(book))
+            if (Repository.GetAllItems().Contains(book))
                 throw new ArgumentException("Element contains in repository" + nameof(book));
             Repository.Add(book);
         }

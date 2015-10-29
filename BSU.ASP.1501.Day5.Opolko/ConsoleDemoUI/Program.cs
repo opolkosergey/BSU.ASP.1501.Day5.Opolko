@@ -10,25 +10,26 @@ namespace ConsoleDemoUI
             var bookService = new BookService(new FileBookRepository("default"));
 
             bookService.AddBook(new Book("J. Richter", "C# via", 500.0, 800));
-            bookService.AddBook(new Book("D. Samal", "Sifo VMSIS", 350.0 , 85));
+            bookService.AddBook(new Book("D. Samal", "Sifo VMSIS", 350.0, 85));
             bookService.AddBook(new Book("A. Pushkin", "E.Onegin", 110.0, 150));
             bookService.AddBook(new Book("L. Tolstoi", "Voina i mir", 650.0, 1000));
             bookService.AddBook(new Book("S. Perro", "Kot v sapogah", 60.0, 50));
 
-            foreach (var book in bookService.Books)
-            Console.WriteLine($"{book}");
+            foreach (var book in bookService.Repository.GetAllItems())
+                Console.WriteLine($"{book}");
 
             bookService.DeleteBook(new Book("L. Tolstoi", "Voina i mir", 650.0, 1000));
             bookService.DeleteBook(new Book("S. Perro", "Kot v sapogah", 60.0, 50));
-
-            foreach (var book in bookService.Books)
+            Console.WriteLine("------------------------------------------");
+            var books = bookService.Repository.GetAllItems();
+            foreach (var book in books)
                 Console.WriteLine($"{book}");
+            Console.WriteLine("------------------------------------------");
+            var sortedBooks = bookService.Sort(c => c.Price);
 
-            bookService.Sort(c => c.Price);
-
-            foreach (var book in bookService.Books)
+            foreach (var book in sortedBooks)
                 Console.WriteLine($"{book}");
-
+            Console.WriteLine("------------------------------------------");
             var selectedBooksByTag = bookService.FindBooksByTags("S");
 
             foreach (var book in selectedBooksByTag)

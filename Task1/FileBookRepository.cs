@@ -14,55 +14,55 @@ namespace Task1
         public FileBookRepository(string path)
         {
             Path = path;
-            File.Create(path);
         }
 
         public void Add(Book item)
         {
-            using (var writer = new BinaryWriter(File.Open(Path, FileMode.Append)))
-            {
-                writer.Write(item.Id);
-                writer.Write(item.Author);
-                writer.Write(item.Title);
-                writer.Write(item.Price);
-                writer.Write(item.Pages);
-            }     
+            var file = new FileStream(Path, FileMode.OpenOrCreate, FileAccess.Write);
+            var writer = new BinaryWriter(file);
+            var pos = writer.Seek(0, SeekOrigin.End);
+            file.Position = pos;
+
+            writer.Write(item.Id);
+            writer.Write(item.Author);
+            writer.Write(item.Title);
+            writer.Write(item.Price);
+            writer.Write(item.Pages);
+
+            writer.Dispose();
+            file.Close();
         }
-        
+
         public void Remove(Book item)
         {
             var books = GetAllItems().ToList();
             var isDeleted = books.Remove(item);
             if (isDeleted)
             {
-                if (books.Count == 0)
-                {
-                    File.Delete(Path);
-                    File.Create(Path);
-                }
-                else
-                {
-                    foreach (var book in books)
-                        Add(book);
-                }
+                File.Delete(Path);
+                foreach (var book in books)
+                    Add(book);
+
             }
         }
 
         public IEnumerable<Book> GetAllItems()
         {
             var books = new List<Book>();
-            using (var reader = new BinaryReader(File.Open(Path, FileMode.Open)))
-            {   
-                while (reader.PeekChar() > -1)
-                {
-                    int id = reader.ReadInt32();
-                    string author = reader.ReadString();
-                    string title = reader.ReadString();
-                    double price = reader.ReadDouble();
-                    int pages = reader.ReadInt32();
-                    books.Add(new Book(author, title, price, pages));
-                }
+
+            var sourceFile = new FileStream(Path, FileMode.OpenOrCreate, FileAccess.Read);
+            var reader = new BinaryReader(sourceFile);
+            while (reader.PeekChar() > -1)
+            {
+                int id = reader.ReadInt32();
+                string author = reader.ReadString();
+                string title = reader.ReadString();
+                double price = reader.ReadDouble();
+                int pages = reader.ReadInt32();
+                books.Add(new Book(author, title, price, pages));
             }
+            reader.Dispose();
+            sourceFile.Close();
             return books;
         }
 

@@ -26,7 +26,7 @@ namespace Task1
         {
             if (ReferenceEquals(null, other)) return false;
             if (ReferenceEquals(this, other)) return true;
-            return Id == other.Id;
+            return Author == other.Author && Title == other.Title && Price.Equals(other.Price) && Pages == other.Pages;
         }
 
         public int CompareTo(Book other)
@@ -41,7 +41,7 @@ namespace Task1
             {
                 return
                     (int)
-                        ((Pages*Price*Author?.GetHashCode() ?? 1*Title?.GetHashCode() ?? 1)/
+                        ((Pages * Price * Author?.GetHashCode() ?? 1 * Title?.GetHashCode() ?? 1) /
                          (Pages - Price - Author?.GetHashCode() ?? 1 - Title?.GetHashCode() ?? 1));
             }
         }
