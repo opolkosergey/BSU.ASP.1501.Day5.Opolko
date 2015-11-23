@@ -7,7 +7,7 @@ namespace ConsoleDemoUI
     {
         static void Main(string[] args)
         {
-            var bookService = new BookService(new FileBookRepository("default"));
+            var bookService = new BookListService(new FileBookRepository("default"));
 
             bookService.AddBook(new Book("J. Richter", "C# via", 500.0, 800));
             bookService.AddBook(new Book("D. Samal", "Sifo VMSIS", 350.0, 85));
@@ -15,25 +15,27 @@ namespace ConsoleDemoUI
             bookService.AddBook(new Book("L. Tolstoi", "Voina i mir", 650.0, 1000));
             bookService.AddBook(new Book("S. Perro", "Kot v sapogah", 60.0, 50));
 
-            foreach (var book in bookService.Repository.GetAllItems())
+            foreach (var book in bookService.BookList)
                 Console.WriteLine($"{book}");
 
             bookService.DeleteBook(new Book("L. Tolstoi", "Voina i mir", 650.0, 1000));
             bookService.DeleteBook(new Book("S. Perro", "Kot v sapogah", 60.0, 50));
             Console.WriteLine("------------------------------------------");
-            var books = bookService.Repository.GetAllItems();
-            foreach (var book in books)
-                Console.WriteLine($"{book}");
-            Console.WriteLine("------------------------------------------");
-            var sortedBooks = bookService.Sort(c => c.Price);
 
-            foreach (var book in sortedBooks)
+            foreach (var book in bookService.BookList)
                 Console.WriteLine($"{book}");
             Console.WriteLine("------------------------------------------");
-            var selectedBooksByTag = bookService.FindBooksByTags("S");
+            bookService.Sort(new BookComparer());
+
+            foreach (var book in bookService.BookList)
+                Console.WriteLine($"{book}");
+            Console.WriteLine("------------------------------------------");
+            var selectedBooksByTag = bookService.FindBooksByTags(b => b.Author.Contains('S'.ToString()));
 
             foreach (var book in selectedBooksByTag)
                 Console.WriteLine($"{book}");
+
+            bookService.Repository.Save(bookService.BookList);
             Console.ReadKey();
         }
     }

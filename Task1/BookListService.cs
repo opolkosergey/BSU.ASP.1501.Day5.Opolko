@@ -6,40 +6,44 @@ using System.Threading.Tasks;
 
 namespace Task1
 {
-    public sealed class BookService
+    public sealed class BookListService
     {
         public IRepository<Book> Repository { get; }
-        public BookService(IRepository<Book> repository)
+        public List<Book> BookList { get; }
+        public BookListService(IRepository<Book> repository)
         {
             Repository = repository;
+            BookList = Repository.LoadBooks().ToList();
         }
 
         public void AddBook(Book book)
         {
             if (book == null)
                 throw new ArgumentNullException(nameof(book));
-            if (Repository.GetAllItems().Contains(book))
+            if (BookList.Contains(book))
                 throw new ArgumentException("Element contains in repository" + nameof(book));
-            Repository.Add(book);
+            BookList.Add(book);
         }
 
         public void DeleteBook(Book book)
         {
             if (book == null)
                 throw new ArgumentNullException(nameof(book));
-            if (!Repository.GetAllItems().Contains(book))
+            if (!BookList.Contains(book))
                 throw new ArgumentException("Element not contains in repository" + nameof(book));
-            Repository.Remove(book);
+            BookList.Remove(book);
         }
 
-        public IEnumerable<Book> Sort(Func<Book, object> keySelector)
+        public void Sort(IComparer<Book> comparer)
         {
-            return Repository.Sort(keySelector);
+            if(comparer == null)
+                throw new ArgumentNullException(nameof(comparer));
+            BookList.Sort(comparer);
         }
 
-        public IEnumerable<Book> FindBooksByTags(string tag)
+        public IEnumerable<Book> FindBooksByTags(Predicate<Book> tags)
         {
-            return Repository.GetElementsByTag(tag);
+            return BookList.FindAll(tags);
         }
     }
 }

@@ -1,8 +1,7 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace Task1
 {
@@ -10,14 +9,12 @@ namespace Task1
     {
         public Book(string author, string title, double price, int pages)
         {
-            Id = 0; //....
             Author = author;
             Title = title;
             Price = price;
             Pages = pages;
         }
 
-        public int Id { get; }
         public string Author { get; set; }
         public string Title { get; set; }
         public double Price { get; set; }
@@ -52,7 +49,7 @@ namespace Task1
             if (ReferenceEquals(this, obj)) return true;
             return obj.GetType() == GetType() && Equals((Book)obj);
         }
-
+        
         public override string ToString()
         {
             var sb = new StringBuilder();
